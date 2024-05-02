@@ -8,8 +8,8 @@ from typing import Sequence, Union, List, Tuple
 
 def element_length(
     lst: Union[Sequence[Union[List[int], Tuple[int, int]]]]
-) -> List[int]:
+) -> List[Tuple[Union[List[int], Tuple[int, int]], int]]:
     """
-    Return list of lengths of elements in lst
+    Return list of tuples where each tuple contains a sequence and its length
     """
-    return [len(i) for i in lst]
+    return [(i, len(i)) for i in lst]
