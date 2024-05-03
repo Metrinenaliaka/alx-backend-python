@@ -3,11 +3,11 @@
 Type-annotated function safe_first_element
 """
 
-from typing import Any, Optional, List
+from typing import Any, Sequence, Union
 
 
-def safe_first_element(lst: List[Any]) -> Optional[Any]:
+def safe_first_element(lst: Sequence[Any]) -> Union[Any, None]:
     """
-    Return the first element of a list
+    Return the first element of a sequence
     """
     return lst[0] if lst else None
