@@ -67,5 +67,38 @@ class TestGetJson(unittest.TestCase):
         mock_get.assert_called_once_with(url)
 
 
+class TestMemoize(unittest.TestCase):
+    """
+    Test case for memoize using  Parameterize and patch
+    """
+
+    def test_memoize(self) -> None:
+
+        """
+        Test that memoize memoizes a function correctly
+        """
+        class TestClass:
+            """
+            Test class to test memoize
+            """
+            def a_method(self):
+                return 42
+
+            @memoize
+            def a_memoized_method(self):
+                return self.a_method()
+
+        with patch.object(TestClass, 'a_method') as mock_a_method:
+            instance = TestClass()
+            mock_a_method.return_value = 42
+
+            # Ensure the method returns the correct value
+            self.assertEqual(instance.a_memoized_method(), 42)
+            self.assertEqual(instance.a_memoized_method(), 42)
+
+            # Ensure the method was only called once
+            mock_a_method.assert_called_once()
+
+
 if __name__ == "__main__":
     unittest.main()
