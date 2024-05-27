@@ -20,12 +20,18 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch('client.get_json')
     def test_org(self, org_name, mock_get_json):
+        """
+        Test that GithubOrgClient.org returns the expected result
+        """
         mock_get_json.return_value = {"name": org_name}
         client = GithubOrgClient(org_name)
         self.assertEqual(client.org(), {"name": org_name})
 
     @patch('client.GithubOrgClient.org')
     def test_public_repos_url(self, mock_org: Mock) -> None:
+        """
+        Test that the result of GithubOrgClient._public_repos_url
+        """
         mock_org.return_value = {"repos_url":
                                  "https://api.github.com/orgs/google/repos"}
         client = GithubOrgClient("google")
