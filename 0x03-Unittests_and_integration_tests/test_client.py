@@ -37,40 +37,53 @@ class TestGithubOrgClient(unittest.TestCase):
         client = GithubOrgClient("google")
         expected_url = "https://api.github.com/orgs/google/repos"
         self.assertEqual(client._public_repos_url, expected_url)
-        @patch('client.get_json')
-        @patch('client.GithubOrgClient._public_repos_url')
-        def test_public_repos(self, mock_public_repos_url:
-                              Mock, mock_get_json: Mock) -> None:
-            """
-            Test that GithubOrgClient.public_repos
-            returns the expected list of repos
-            and that the mocked property and get_json were called once.
-            """
-            # Define the mocked payload
-            mocked_payload = [
-                {"name": "repo1", "license": {"key": "MIT"}},
-                {"name": "repo2", "license": {"key": "Apache"}},
-                {"name": "repo3", "license": {"key": "GPL"}},
-            ]
 
-            # Configure the mock objects
-            url = "https://api.github.com/orgs/google/repos"
-            mock_public_repos_url.return_value = url
-            mock_get_json.return_value = mocked_payload
+    @patch('client.get_json')
+    @patch('client.GithubOrgClient._public_repos_url')
+    def test_public_repos(self, mock_public_repos_url:
+                          Mock, mock_get_json: Mock) -> None:
+        """
+        Test that GithubOrgClient.public_repos
+        returns the expected list of repos
+        and that the mocked property and get_json were called once.
+        """
+        # Define the mocked payload
+        mocked_payload = [
+            {"name": "repo1", "license": {"key": "MIT"}},
+            {"name": "repo2", "license": {"key": "Apache"}},
+            {"name": "repo3", "license": {"key": "GPL"}},
+        ]
 
-            # Create an instance of GithubOrgClient
-            client = GithubOrgClient("google")
+        # Configure the mock objects
+        url = "https://api.github.com/orgs/google/repos"
+        mock_public_repos_url.return_value = url
+        mock_get_json.return_value = mocked_payload
 
-            # Call the public_repos method
-            repos = client.public_repos(license="MIT")
+        # Create an instance of GithubOrgClient
+        client = GithubOrgClient("google")
 
-            # Assert that the returned list of repos is what we expect
-            expected_repos = ["repo1"]
-            self.assertEqual(repos, expected_repos)
+        # Call the public_repos method
+        repos = client.public_repos(license="MIT")
 
-            # Assert that the mocked property and get_json were called once
-            mock_public_repos_url.assert_called_once()
-            mock_get_json.assert_called_once()
+        # Assert that the returned list of repos is what we expect
+        expected_repos = ["repo1"]
+        self.assertEqual(repos, expected_repos)
+
+        # Assert that the mocked property and get_json were called once
+        mock_public_repos_url.assert_called_once()
+        mock_get_json.assert_called_once()
+
+    @parameterized.expand([
+        ({"license": {"key": "my_license"}}, "my_license", True),
+        ({"license": {"key": "other_license"}}, "my_license", False),
+    ])
+    def test_has_license(self, repo, license_key, expected_result):
+        """
+        Test that GithubOrgClient.has_license returns the expected result
+        """
+        client = GithubOrgClient("google")
+        result = client.has_license(repo, license_key)
+        self.assertEqual(result, expected_result)
 
 
 if __name__ == '__main__':
